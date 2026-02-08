@@ -1,0 +1,473 @@
+/* ═════════════════════════════════════════════════════════════════════════
+   Irrigation Control System CSS
+   Dark theme with improved error handling UI
+   ═════════════════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────
+   Theme variables
+   ───────────────────────────────────────── */
+:root {
+  --bg:    #0b1220;
+  --card:  #121a2b;
+  --line:  #1f2a44;
+  --txt:   #e6eaf2;
+  --muted: rgba(230,234,242,.75);
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+}
+
+/* ─────────────────────────────────────────
+   Base layout & typography
+   ───────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Arial, sans-serif;
+  margin: 0;
+  padding: 16px;
+  background: var(--bg);
+  color: var(--txt);
+  line-height: 1.6;
+}
+
+.wrap {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+
+h2 {
+  font-size: 1.25rem;
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 1.1rem;
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+/* ─────────────────────────────────────────
+   Header / Top bar
+   ───────────────────────────────────────── */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.logo-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: white;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+}
+
+.logo-img {
+  height: 80px;
+  width: auto;
+  display: block;
+}
+
+/* ─────────────────────────────────────────
+   Sections & Cards
+   ───────────────────────────────────────── */
+.section {
+  margin-bottom: 1.5rem;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+/* ─────────────────────────────────────────
+   Alert Cards (Error, Warning, Info)
+   ───────────────────────────────────────── */
+.alert-error {
+  border-left: 4px solid var(--danger);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.alert-warning {
+  border-left: 4px solid var(--warning);
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.alert-info {
+  border-left: 4px solid var(--info);
+  background: rgba(59, 130, 246, 0.1);
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin: 0.5rem 0;
+}
+
+/* ─────────────────────────────────────────
+   Buttons
+   ───────────────────────────────────────── */
+.btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn,
+button[type="submit"],
+input[type="submit"] {
+  display: inline-block;
+  padding: 8px 16px;
+  background: #334155;
+  color: var(--txt);
+  text-decoration: none;
+  border-radius: 4px;
+  border: 1px solid #475569;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.btn:hover,
+button[type="submit"]:hover {
+  background: #475569;
+  border-color: #64748b;
+}
+
+.btn.ok {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+.btn.ok:hover {
+  background: #059669;
+}
+
+.btn.danger {
+  background: var(--danger);
+  border-color: var(--danger);
+}
+
+.btn.danger:hover {
+  background: #dc2626;
+}
+
+.btn.btn-success {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+.btn.btn-success:hover {
+  background: #059669;
+}
+
+/* ─────────────────────────────────────────
+   Form elements
+   ───────────────────────────────────────── */
+input[type="text"],
+input[type="time"],
+input[type="number"],
+select,
+textarea {
+  padding: 8px 12px;
+  background: #1e293b;
+  color: var(--txt);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+input[type="text"]:focus,
+input[type="time"]:focus,
+input[type="number"]:focus {
+  outline: none;
+  border-color: var(--info);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+input[type="checkbox"] {
+  cursor: pointer;
+}
+
+label {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* ─────────────────────────────────────────
+   Layout utilities
+   ───────────────────────────────────────── */
+.row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+/* ─────────────────────────────────────────
+   Text utilities
+   ───────────────────────────────────────── */
+.muted {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+code {
+  font-family: 'Courier New', monospace;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.85em;
+  opacity: 0.9;
+}
+
+/* ─────────────────────────────────────────
+   Pills / Tags
+   ───────────────────────────────────────── */
+.pill {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.pill-active {
+  background: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* ─────────────────────────────────────────
+   Zone cards (manual control)
+   ───────────────────────────────────────── */
+.zone-card {
+  padding: 12px;
+}
+
+.zone-card .title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.zone-card .btns {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.zone-card .row {
+  width: 100%;
+}
+
+.zone-card input[type="number"] {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ─────────────────────────────────────────
+   Schedule form
+   ───────────────────────────────────────── */
+.sched-row {
+  margin-bottom: 8px;
+}
+
+.sched-days {
+  flex-wrap: wrap;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 4px;
+}
+
+.zone-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.zone-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.zone-name {
+  font-weight: 500;
+  flex: 1;
+  min-width: 0;
+}
+
+.zone-item input[type="number"] {
+  width: 4rem;
+}
+
+.zone-unit {
+  font-size: 0.8rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ─────────────────────────────────────────
+   Tables
+   ───────────────────────────────────────── */
+.table-responsive {
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+.programs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.programs-table th {
+  text-align: left;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 2px solid var(--line);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.programs-table td {
+  padding: 10px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+.programs-table tr:last-child td {
+  border-bottom: none;
+}
+
+.programs-table tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sequence-cell {
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ─────────────────────────────────────────
+   Environment card
+   ───────────────────────────────────────── */
+.env-card {
+  background: linear-gradient(135deg, var(--card) 0%, rgba(59, 130, 246, 0.05) 100%);
+}
+
+.env-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.env-header h3 {
+  margin: 0;
+}
+
+.env-header button {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+/* ─────────────────────────────────────────
+   Responsive design
+   ───────────────────────────────────────── */
+@media (max-width: 640px) {
+  body {
+    padding: 12px;
+  }
+
+  h1 {
+    font-size: 1.25rem;
+  }
+
+  .top-bar {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .zone-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .programs-table {
+    font-size: 0.8rem;
+  }
+
+  .programs-table th,
+  .programs-table td {
+    padding: 8px 6px;
+  }
+
+  .btns {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* ─────────────────────────────────────────
+   Utility classes
+   ───────────────────────────────────────── */
+.text-center {
+  text-align: center;
+}
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Σφάλμα - Αυτόματο Πότισμα</title>
+</head>
+
+<body>
+<div class="wrap">
+
+    <!-- Header -->
+    <div class="top-bar">
+        <div>
+            <h1>Αυτόματο Σύστημα Ποτίσματος</h1>
+        </div>
+    </div>
+
+    <!-- Error Message -->
+    <div class="section">
+        <div class="card alert-error">
+            <h2 style="margin-top:0;">❌ {{ error_title or "Σφάλμα" }}</h2>
+            
+            <p style="font-size:1.1em; margin:1rem 0;">
+                {{ error_message or "Παρουσιάστηκε ένα σφάλμα." }}
+            </p>
+
+            {% if device_id %}
+            <div class="alert-info" style="margin-top:1rem;">
+                <p><strong>Συσκευή:</strong> {{ device_id }}</p>
+                <p class="muted">Το σύστημα θα συνεχίσει να προσπαθεί να επικοινωνήσει με τη συσκευή.</p>
+            </div>
+            {% endif %}
+
+            <div class="btns" style="margin-top:1.5rem;">
+                <a href="/" class="btn ok">Επιστροφή στην Αρχική</a>
+                <a href="/all/off" class="btn danger">Κλείσιμο Όλων των Ζωνών</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Troubleshooting Tips -->
+    <div class="section">
+        <div class="card">
+            <h3>Βήματα Επίλυσης Προβλήματος:</h3>
+            <ol style="line-height:1.8; padding-left:1.5rem;">
+                <li>Ελέγξτε αν το Raspberry Pi και όλες οι συσκευές έχουν σωστή σύνδεση στο ρεύμα</li>
+                <li>Βεβαιωθείτε ότι όλες οι συσκευές είναι συνδεδεμένες στο δίκτυο Wi-Fi</li>
+                <li>Ελέγξτε τις IP διευθύνσεις των συσκευών Shelly</li>
+                <li>Επανεκκινήστε το Raspberry Pi αν το πρόβλημα παραμένει</li>
+                <li>Ελέγξτε τα καλώδια των GPIO relays</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Technical Details (collapsed by default) -->
+    {% if error_details %}
+    <div class="section">
+        <details class="card">
+            <summary style="cursor:pointer; font-weight:bold; padding:0.5rem 0;">
+                Τεχνικές Λεπτομέρειες (για προχωρημένους)
+            </summary>
+            <pre style="background:#0b1220; padding:1rem; border-radius:4px; overflow-x:auto; margin-top:1rem;">{{ error_details }}</pre>
+        </details>
+    </div>
+    {% endif %}
+
+    <!-- Footer -->
+    <div class="section" style="text-align:center; margin-top:2rem;">
+        <p class="muted" style="font-size:0.85em;">
+            Αν το πρόβλημα παραμένει, επικοινωνήστε με τον διαχειριστή του συστήματος.
+        </p>
+    </div>
+
+</div>
+</body>
+</html>
