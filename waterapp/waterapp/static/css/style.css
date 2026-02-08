@@ -1,0 +1,272 @@
+/* ─────────────────────────────────────────
+   Theme variables
+   ───────────────────────────────────────── */
+:root {
+  --bg:    #0b1220;
+  --card:  #121a2b;
+  --line:  #1f2a44;
+  --txt:   #e6eaf2;
+  --muted: rgba(230,234,242,.75);
+}
+
+/* ─────────────────────────────────────────
+   Base layout & typography
+   ───────────────────────────────────────── */
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Arial, sans-serif;
+  margin: 0;
+  padding: 16px;
+  background: var(--bg);
+  color: var(--txt);
+}
+
+.wrap {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin: 0 0 6px;
+}
+
+h2 {
+  font-size: 1.1rem;
+  margin: 0 0 8px;
+}
+
+.section {
+  margin: 18px 0 26px;
+}
+
+/* ─────────────────────────────────────────
+   Cards, layout helpers
+   ───────────────────────────────────────── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 10px 14px;          /* slightly smaller to make boxes less tall */
+  box-shadow: 0 1px 0 #0b1220 inset;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.pill {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--line);
+  font-size: .8rem;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* ─────────────────────────────────────────
+   Buttons & inputs
+   ───────────────────────────────────────── */
+.btns {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+button,
+a.btn {
+  appearance: none;
+  border: 0;
+  border-radius: 12px;
+  padding: 10px 14px;
+  background: #30406b;
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+a.btn:hover,
+button:hover {
+  filter: brightness(1.05);
+}
+
+.danger {
+  background: #6b3030;
+}
+
+.ok {
+  background: #305a30;
+}
+
+input[type=number],
+input[type=time],
+input[type=text] {
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid #30406b;
+  background: var(--bg);
+  color: var(--txt);
+}
+
+/* ─────────────────────────────────────────
+   Tables
+   ───────────────────────────────────────── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: .95rem;
+}
+
+th,
+td {
+  padding: 8px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+/* stored programs table */
+.stored-programs {
+  margin-top: 1.5rem;
+}
+
+.programs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.programs-table th,
+.programs-table td {
+  border: 1px solid #374151;
+  padding: 0.5rem 0.75rem;
+  vertical-align: middle;
+}
+
+.programs-table th {
+  background: #111827;
+  color: #e5e7eb;
+  font-weight: 600;
+}
+
+.programs-table tbody tr:nth-child(odd) {
+  background: #020617;
+}
+
+.programs-table tbody tr:nth-child(even) {
+  background: #030712;
+}
+
+/* smaller delete button inside table */
+.programs-table .btn.danger {
+  padding: 0.1rem 0.6rem;
+  font-size: 0.8rem;
+  line-height: 1.1;
+}
+
+/* ─────────────────────────────────────────
+   Schedules (durations grid)
+   ───────────────────────────────────────── */
+.sched-row {
+  align-items: center;
+}
+
+.sched-days {
+  flex-wrap: wrap;
+}
+
+/* zones: 2 per row */
+.zone-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 16px;
+  margin-top: 4px;
+}
+
+.zone-item {
+  border: 1px solid #374151;
+  border-radius: 4px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.zone-name {
+  font-weight: 500;
+  margin-right: 6px;
+}
+
+.zone-item input[type="number"] {
+  width: 4rem;
+  margin-right: 4px;
+}
+
+.zone-unit {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+/* ─────────────────────────────────────────
+   Environment card header
+   ───────────────────────────────────────── */
+.env-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.env-header h3 {
+  margin: 0;
+}
+
+.env-header button {
+  padding: 0.25rem 0.75rem;
+}
+
+/* ─────────────────────────────────────────
+   Top logo bar
+   ───────────────────────────────────────── */
+/* (HTML: inside top-bar -> <div class="logo-box"><img class="logo-img"> <span class="logo-label">...) */
+
+.logo-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background:white;      /* subtle light background */
+  border: 1px solid rgba(148, 163, 184, 0.45); /* soft outline */
+}
+
+.logo-img {
+  height: 80px;      /* bigger logo, but still fits the bar */
+  width: auto;
+  display: block;
+}
+
+
+
+code {
+  opacity: .9;
+}
