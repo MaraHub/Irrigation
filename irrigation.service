@@ -1,0 +1,35 @@
+[Unit]
+Description=Automated Irrigation Control System
+Documentation=https://github.com/your-repo/irrigation
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ic
+Group=gpio
+WorkingDirectory=/home/ic/irrigation
+
+# Environment
+Environment="WATERAPP_MOCK_HARDWARE=0"
+Environment="PYTHONUNBUFFERED=1"
+
+# Execution
+ExecStart=/home/ic/irrigation/venv/bin/python3 /home/ic/irrigation/run.py
+
+# Restart policy
+Restart=always
+RestartSec=10
+StartLimitInterval=0
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=irrigation
+
+[Install]
+WantedBy=multi-user.target

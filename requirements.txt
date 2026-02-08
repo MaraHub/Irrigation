@@ -1,0 +1,23 @@
+# Python dependencies for Irrigation Control System
+# Install with: pip install -r requirements.txt
+
+# Web framework
+Flask==3.0.0
+Werkzeug==3.0.1
+
+# HTTP requests (for Shelly devices and sensor)
+requests==2.31.0
+
+# GPIO control (Raspberry Pi only)
+# Note: This will fail on non-Pi systems, which is expected
+# The application will automatically use mock hardware
+RPi.GPIO==0.7.1; platform_machine == "armv7l" or platform_machine == "aarch64"
+
+# Alternative GPIO library (optional)
+# gpiozero==2.0.1; platform_machine == "armv7l" or platform_machine == "aarch64"
+
+# Development dependencies (optional)
+# Uncomment for development
+# pytest==7.4.3
+# black==23.12.1
+# flake8==6.1.0
