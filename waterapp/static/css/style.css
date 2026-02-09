@@ -73,14 +73,14 @@ h3 {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: white;
-  border: 1px solid rgba(148, 163, 184, 0.45);
+  padding: 0;
+  border-radius: 0;
+  background: transparent;  /* Remove white background */
+  border: none;  /* Remove border */
 }
 
 .logo-img {
-  height: 80px;
+  height: 150px;  /* Increased from 80px to 150px */
   width: auto;
   display: block;
 }
