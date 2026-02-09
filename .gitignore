@@ -18,5 +18,9 @@ env/
 .vscode/
 .idea/
 
+# logos
+*.png
+*.jpeg
+
 # (Optional) if you don't want runtime data in git:
 # waterapp/waterapp/schedules.json
