@@ -143,14 +143,15 @@
             
             <div class="grid" style="margin-top:12px">
                 {% for key, name in zones %}
-                <div class="card zone-card">
+                <div class="card zone-card" id="zone-{{ key }}" data-zone="{{ key }}">
                     <div class="title">
                         <strong>{{name}}</strong>
                         <code>{{key}}</code>
+                        <span class="zone-status" id="status-{{ key }}"></span>
                     </div>
                     <div class="btns">
-                        <a class="btn btn-success" href="/on/{{key}}">ON</a>
-                        <a class="btn" href="/off/{{key}}">OFF</a>
+                        <a class="btn btn-on" href="/on/{{key}}" data-zone="{{key}}">ON</a>
+                        <a class="btn btn-off" href="/off/{{key}}" data-zone="{{key}}">OFF</a>
                         <form class="row" action="/pulse/{{key}}" method="post" style="margin-top:4px;">
                             <input type="number" name="secs" step="1" min="1" max="3600" value="5" required>
                             <button type="submit" class="btn">PULSE (s)</button>
@@ -279,17 +280,74 @@
 </div>
 
 <script>
-    // Auto-dismiss flash messages after 8 seconds
+    // Detect which zone is currently active
     document.addEventListener('DOMContentLoaded', function() {
-        const flashMessages = document.querySelectorAll('.flash-message');
-        flashMessages.forEach(function(message) {
-            setTimeout(function() {
-                message.style.animation = 'slideOut 0.3s ease-in';
-                setTimeout(function() {
-                    message.remove();
-                }, 300);
-            }, 8000);
+        // Get current run info from the page
+        const currentRunActive = {{ 'true' if current.active else 'false' }};
+        const currentRunStep = "{{ current.step }}";
+        
+        if (currentRunActive && currentRunStep) {
+            // Extract zone ID from step (format: "R1 ON" or "1/3: R1 (5m)")
+            const zoneMatch = currentRunStep.match(/\b([RS]\d+)\b/);
+            if (zoneMatch) {
+                const activeZone = zoneMatch[1];
+                highlightActiveZone(activeZone);
+            }
+        }
+    });
+
+    function highlightActiveZone(zoneId) {
+        // Reset all zones first
+        document.querySelectorAll('.zone-card').forEach(function(card) {
+            card.classList.remove('zone-active');
+            const onBtn = card.querySelector('.btn-on');
+            const offBtn = card.querySelector('.btn-off');
+            if (onBtn) {
+                onBtn.classList.remove('btn-active');
+                onBtn.style.opacity = '1';
+            }
+            if (offBtn) {
+                offBtn.classList.remove('btn-active');
+                offBtn.style.opacity = '1';
+            }
         });
+
+        // Highlight active zone
+        const activeCard = document.getElementById('zone-' + zoneId);
+        if (activeCard) {
+            activeCard.classList.add('zone-active');
+            
+            // Make ON button green and pulsing
+            const onBtn = activeCard.querySelector('.btn-on');
+            if (onBtn) {
+                onBtn.classList.add('btn-active');
+            }
+            
+            // Make OFF button more prominent
+            const offBtn = activeCard.querySelector('.btn-off');
+            if (offBtn) {
+                offBtn.style.opacity = '1';
+                offBtn.style.fontWeight = 'bold';
+            }
+            
+            // Add status indicator
+            const status = activeCard.querySelector('.zone-status');
+            if (status) {
+                status.textContent = '● ACTIVE';
+                status.classList.add('status-active');
+            }
+        }
+    }
+
+    // Auto-dismiss flash messages after 8 seconds
+    const flashMessages = document.querySelectorAll('.flash-message');
+    flashMessages.forEach(function(message) {
+        setTimeout(function() {
+            message.style.animation = 'slideOut 0.3s ease-in';
+            setTimeout(function() {
+                message.remove();
+            }, 300);
+        }, 8000);
     });
 
     // Auto-refresh page every 30 seconds when a program is running
@@ -310,6 +368,63 @@
     transform: translateX(100%);
     opacity: 0;
   }
+}
+
+/* Active zone highlighting */
+.zone-card.zone-active {
+  border: 2px solid var(--success);
+  background: rgba(16, 185, 129, 0.05);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+/* Active ON button (green and pulsing) */
+.btn-on.btn-active {
+  background: var(--success) !important;
+  border-color: var(--success) !important;
+  animation: pulse 2s ease-in-out infinite;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+/* Default ON button (green but not pulsing) */
+.btn-on {
+  background: #059669;
+  border-color: #059669;
+  color: white;
+}
+
+.btn-on:hover {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+/* OFF button (red) */
+.btn-off {
+  background: #7f1d1d;
+  border-color: #7f1d1d;
+  color: white;
+}
+
+.btn-off:hover {
+  background: var(--danger);
+  border-color: var(--danger);
+}
+
+/* Zone status indicator */
+.zone-status {
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin-left: auto;
+}
+
+.zone-status.status-active {
+  color: var(--success);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
 }
 </style>
 

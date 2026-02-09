@@ -264,12 +264,15 @@ button[type="submit"]:hover {
 }
 
 .btn.btn-success {
-  background: var(--success);
-  border-color: var(--success);
+  background: #059669;
+  border-color: #059669;
+  color: white;
 }
 
 .btn.btn-success:hover {
-  background: #059669;
+  background: var(--success);
+  border-color: var(--success);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
 }
 
 /* ─────────────────────────────────────────

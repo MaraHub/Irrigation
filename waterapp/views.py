@@ -188,6 +188,15 @@ def on(key):
             logger.error(f"[VIEWS] Hardware error on {key}: {error_msg}")
             return redirect(url_for("main.index"))
 
+        # Update current_run state to show it's active
+        with state_lock:
+            current_run.update({
+                "active": True,
+                "name": f"Χειροκίνητο: {NAMES.get(key, key)}",
+                "step": f"{key} ON",
+                "ends_at": None,  # Manual, no end time
+            })
+
         # Success
         flash(f"✅ Η ζώνη '{NAMES.get(key, key)}' ενεργοποιήθηκε", "success")
         return redirect(url_for("main.index"))
@@ -220,6 +229,15 @@ def off(key):
             flash(f"💡 Ελέγξτε τη σύνδεση της συσκευής '{zone_name}' ({key})", "warning")
             logger.error(f"[VIEWS] Hardware error on {key}: {error_msg}")
             return redirect(url_for("main.index"))
+
+        # Clear current_run state when turning off
+        with state_lock:
+            current_run.update({
+                "active": False,
+                "name": None,
+                "step": None,
+                "ends_at": None,
+            })
 
         flash(f"✅ Η ζώνη '{NAMES.get(key, key)}' απενεργοποιήθηκε", "success")
         return redirect(url_for("main.index"))
