@@ -20,6 +20,26 @@
         </div>
     </div>
 
+    <!-- Flash Messages (Errors, Warnings, Success) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">
+                        <span class="flash-icon">
+                            {% if category == 'error' %}❌
+                            {% elif category == 'warning' %}⚠️
+                            {% elif category == 'success' %}✅
+                            {% else %}ℹ️{% endif %}
+                        </span>
+                        <span class="flash-text">{{ message }}</span>
+                        <button class="flash-close" onclick="this.parentElement.remove()">×</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
     <!-- Hardware Status Warnings -->
     {% if failed_devices %}
     <div class="section">
@@ -27,8 +47,21 @@
             <h3 style="margin-top:0;">⚠️ Προειδοποίηση Υλικού</h3>
             <p>Οι παρακάτω ζώνες δεν ανταποκρίνονται και μπορεί να μην λειτουργούν σωστά:</p>
             <ul>
-                {% for device_id, device_name in failed_devices %}
-                <li><strong>{{ device_name }}</strong> ({{ device_id }})</li>
+                {% for device_id, device_name, last_seen, last_error in failed_devices %}
+                <li>
+                    <strong>{{ device_name }}</strong> ({{ device_id }})
+                    <br>
+                    <small class="muted">
+                        {% if last_seen != "Never" %}
+                            Τελευταία επικοινωνία: {{ last_seen }}
+                        {% else %}
+                            Δεν έχει επικοινωνήσει ποτέ
+                        {% endif %}
+                        {% if last_error %}
+                        <br>Σφάλμα: {{ last_error }}
+                        {% endif %}
+                    </small>
+                </li>
                 {% endfor %}
             </ul>
             <p class="muted">Ελέγξτε τις συνδέσεις του υλικού. Το σύστημα θα συνεχίσει να προσπαθεί να ξανασυνδεθεί.</p>
@@ -246,6 +279,19 @@
 </div>
 
 <script>
+    // Auto-dismiss flash messages after 8 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        const flashMessages = document.querySelectorAll('.flash-message');
+        flashMessages.forEach(function(message) {
+            setTimeout(function() {
+                message.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(function() {
+                    message.remove();
+                }, 300);
+            }, 8000);
+        });
+    });
+
     // Auto-refresh page every 30 seconds when a program is running
     {% if current.active %}
     setTimeout(function() {
@@ -253,6 +299,19 @@
     }, 30000);
     {% endif %}
 </script>
+
+<style>
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+</style>
 
 </body>
 </html>

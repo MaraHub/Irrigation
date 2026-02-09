@@ -13,6 +13,7 @@ from flask import (
     request,
     jsonify,
     flash,
+    session,
 )
 
 from .config import NAMES, ZORDER, SENSOR_IP, SENSOR_TIMEOUT
@@ -137,7 +138,12 @@ def index():
     # Get hardware status for error display
     hw_status = get_all_hardware_status()
     failed_devices = [
-        (device_id, NAMES.get(device_id, device_id))
+        (
+            device_id,
+            NAMES.get(device_id, device_id),
+            status.get("last_seen", "Never"),
+            status.get("last_error", ""),
+        )
         for device_id, status in hw_status.items()
         if status.get("is_failed", False)
     ]
@@ -165,11 +171,8 @@ def on(key):
         devices = init_hardware()
         if key not in devices:
             logger.warning(f"[VIEWS] Unknown zone requested: {key}")
-            return render_template(
-                "error.html",
-                error_title="Unknown Zone",
-                error_message=f"Zone '{key}' does not exist.",
-            ), 404
+            flash(f"❌ Σφάλμα: Η ζώνη '{key}' δεν υπάρχει.", "error")
+            return redirect(url_for("main.index"))
 
         success, error_msg = safe_hardware_operation(
             lambda: exclusive_on(key),
@@ -178,22 +181,21 @@ def on(key):
         )
 
         if not success:
-            return render_template(
-                "error.html",
-                error_title="Hardware Error",
-                error_message=error_msg,
-                device_id=key,
-            ), 500
+            # Show error as flash message on main page
+            zone_name = NAMES.get(key, key)
+            flash(f"⚠️ Σφάλμα Υλικού: {error_msg}", "error")
+            flash(f"💡 Ελέγξτε τη σύνδεση της συσκευής '{zone_name}' ({key})", "warning")
+            logger.error(f"[VIEWS] Hardware error on {key}: {error_msg}")
+            return redirect(url_for("main.index"))
 
+        # Success
+        flash(f"✅ Η ζώνη '{NAMES.get(key, key)}' ενεργοποιήθηκε", "success")
         return redirect(url_for("main.index"))
 
     except Exception as e:
         logger.exception(f"[VIEWS] Unexpected error in /on/{key}")
-        return render_template(
-            "error.html",
-            error_title="Unexpected Error",
-            error_message="An unexpected error occurred. Please try again.",
-        ), 500
+        flash(f"❌ Απροσδόκητο σφάλμα: {str(e)}", "error")
+        return redirect(url_for("main.index"))
 
 
 @bp.route("/off/<key>")
@@ -203,11 +205,8 @@ def off(key):
         devices = init_hardware()
         if key not in devices:
             logger.warning(f"[VIEWS] Unknown zone requested: {key}")
-            return render_template(
-                "error.html",
-                error_title="Unknown Zone",
-                error_message=f"Zone '{key}' does not exist.",
-            ), 404
+            flash(f"❌ Σφάλμα: Η ζώνη '{key}' δεν υπάρχει.", "error")
+            return redirect(url_for("main.index"))
 
         success, error_msg = safe_hardware_operation(
             lambda: devices[key].off(),
@@ -216,22 +215,19 @@ def off(key):
         )
 
         if not success:
-            return render_template(
-                "error.html",
-                error_title="Hardware Error",
-                error_message=error_msg,
-                device_id=key,
-            ), 500
+            zone_name = NAMES.get(key, key)
+            flash(f"⚠️ Σφάλμα Υλικού: {error_msg}", "error")
+            flash(f"💡 Ελέγξτε τη σύνδεση της συσκευής '{zone_name}' ({key})", "warning")
+            logger.error(f"[VIEWS] Hardware error on {key}: {error_msg}")
+            return redirect(url_for("main.index"))
 
+        flash(f"✅ Η ζώνη '{NAMES.get(key, key)}' απενεργοποιήθηκε", "success")
         return redirect(url_for("main.index"))
 
     except Exception as e:
         logger.exception(f"[VIEWS] Unexpected error in /off/{key}")
-        return render_template(
-            "error.html",
-            error_title="Unexpected Error",
-            error_message="An unexpected error occurred. Please try again.",
-        ), 500
+        flash(f"❌ Απροσδόκητο σφάλμα: {str(e)}", "error")
+        return redirect(url_for("main.index"))
 
 
 @bp.route("/pulse/<key>", methods=["POST"])

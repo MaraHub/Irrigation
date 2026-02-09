@@ -81,6 +81,16 @@ class HardwareStatus:
     
     def get_status_dict(self) -> Dict:
         """Get status as dictionary for API responses."""
+        # Calculate time since last success
+        time_since_success = None
+        if self.last_success_time:
+            time_since_success = (datetime.now() - self.last_success_time).total_seconds()
+        
+        # Calculate time since last error
+        time_since_error = None
+        if self.last_error_time:
+            time_since_error = (datetime.now() - self.last_error_time).total_seconds()
+        
         return {
             "device_id": self.device_id,
             "is_failed": self.is_failed,
@@ -92,8 +102,32 @@ class HardwareStatus:
             "last_success_time": (
                 self.last_success_time.isoformat() if self.last_success_time else None
             ),
-            "can_retry": self.can_retry()
+            "time_since_success_seconds": time_since_success,
+            "time_since_error_seconds": time_since_error,
+            "can_retry": self.can_retry(),
+            # Human-readable times
+            "last_seen": (
+                self._format_time_ago(time_since_success) 
+                if time_since_success is not None 
+                else "Never"
+            ),
+            "last_error_ago": (
+                self._format_time_ago(time_since_error)
+                if time_since_error is not None
+                else "Never"
+            ),
         }
+    
+    def _format_time_ago(self, seconds: float) -> str:
+        """Format seconds into human-readable time ago string."""
+        if seconds < 60:
+            return f"{int(seconds)}s ago"
+        elif seconds < 3600:
+            return f"{int(seconds / 60)}m ago"
+        elif seconds < 86400:
+            return f"{int(seconds / 3600)}h ago"
+        else:
+            return f"{int(seconds / 86400)}d ago"
 
 
 # Global hardware status tracker
@@ -252,29 +286,40 @@ class ShellyDevice:
         """
         Send RPC command to Shelly device.
         
+        Uses GET request with URL parameters (compatible with Shelly Plus devices).
         Returns True on success, False on failure.
         """
         if not self.status.can_retry():
             logger.warning(f"[SHELLY] Device {self.device_id} in cooldown, skipping command")
             return False
         
-        url = f"http://{self.ip}/rpc"
-        payload = {
-            "id": 1,
-            "method": method,
-            "params": params or {}
-        }
+        # Build URL - use GET with params for compatibility
+        url = f"http://{self.ip}/rpc/{method}"
+        
+        # Convert params to URL-friendly format
+        url_params = {}
+        if params:
+            for key, value in params.items():
+                if isinstance(value, bool):
+                    url_params[key] = "true" if value else "false"
+                else:
+                    url_params[key] = str(value)
         
         try:
-            logger.debug(f"[SHELLY] Sending to {url}: {payload}")
-            response = requests.post(url, json=payload, timeout=self.timeout)
+            logger.debug(f"[SHELLY] GET {url} with params: {url_params}")
+            response = requests.get(url, params=url_params, timeout=self.timeout)
             response.raise_for_status()
             
-            data = response.json()
-            logger.debug(f"[SHELLY] Response: {data}")
-            
-            if "error" in data:
-                raise ShellyError(f"Shelly returned error: {data['error']}")
+            # Try to parse JSON response
+            try:
+                data = response.json()
+                logger.debug(f"[SHELLY] Response: {data}")
+                
+                if "error" in data:
+                    raise ShellyError(f"Shelly returned error: {data['error']}")
+            except ValueError:
+                # Some Shelly responses might not be JSON, that's OK
+                pass
             
             self.status.record_success()
             return True
@@ -312,7 +357,9 @@ class ShellyDevice:
         if success:
             logger.info(f"[SHELLY] Device {self.device_id} → ON")
         else:
-            logger.error(f"[SHELLY] Failed to turn ON device {self.device_id}")
+            error_msg = f"Failed to turn ON device {self.device_id}"
+            logger.error(f"[SHELLY] {error_msg}")
+            raise ShellyError(error_msg)
     
     def off(self):
         """Turn Shelly switch OFF."""
@@ -323,7 +370,9 @@ class ShellyDevice:
         if success:
             logger.info(f"[SHELLY] Device {self.device_id} → OFF")
         else:
-            logger.error(f"[SHELLY] Failed to turn OFF device {self.device_id}")
+            error_msg = f"Failed to turn OFF device {self.device_id}"
+            logger.error(f"[SHELLY] {error_msg}")
+            raise ShellyError(error_msg)
 
 
 # ============================================================================
